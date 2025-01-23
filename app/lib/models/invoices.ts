@@ -11,6 +11,7 @@ export interface iInvoice extends mongoose.Document {
 export interface iInvoiceData extends Omit<iInvoice, "_id" | "customer_id"> {
   customer_id: string;
   _id: string;
+  attachments: any[];
 }
 
 const invoicesSchema = new mongoose.Schema<iInvoice>({

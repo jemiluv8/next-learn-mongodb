@@ -11,7 +11,7 @@ import FileUploader from '../file-uploader/file-uploader';
 
 import { useActionState } from 'react';
 import { Button } from '@/app/ui/button';
-import { updateInvoice, State } from '@/app/lib/actions';
+import { updateInvoice, State } from '@/app/lib/actions/actions';
 import { iCustomerData, iInvoiceData } from '@/app/lib/models';
 
 export default function EditInvoiceForm({
@@ -24,6 +24,13 @@ export default function EditInvoiceForm({
   const initialState: State = { message: null, errors: {} };
   const updateInvoiceWithId = updateInvoice.bind(null, invoice._id);
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+
+  const addFile = (id: string) => { // look into moving this into the fileupload component
+    // seems that makes more sense than dumping it here?
+    const hiddenInput = document.getElementById("fileIds") as HTMLInputElement;
+    const currentIds = hiddenInput?.value ? JSON.parse(hiddenInput.value) : [];
+    hiddenInput.value = JSON.stringify([...currentIds, id]);
+  };
 
   return (
     <form action={formAction}>
@@ -151,7 +158,9 @@ export default function EditInvoiceForm({
           ) : null}
         </div>
 
-        <FileUploader />
+        <FileUploader record_id={invoice._id} onUploadComplete={(id) => addFile(id)} existingUploads={invoice.attachments ||[]} />
+        <input type="hidden" id="fileIds" name="fileIds" value="[]" />
+
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link

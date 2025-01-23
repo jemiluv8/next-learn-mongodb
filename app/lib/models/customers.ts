@@ -8,7 +8,7 @@ export interface iCustomer extends mongoose.Document {
  image_url: string;
 }
 
-export interface iCustomerData extends Omit<iInvoice, "_id" | "customer_id"> {
+export interface iCustomerData extends Omit<iCustomer, "_id" | "customer_id"> {
   _id: string;
 }
 

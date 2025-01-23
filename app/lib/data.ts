@@ -4,6 +4,7 @@ import mongooseConnect from './mongodb/mongoose';
 import { Invoice } from './models/invoices';
 import { makeOneLookup } from './mongodb/utils';
 import { Customer } from './models';
+import { Types } from "mongoose";
 
 await mongooseConnect();
 
@@ -206,15 +207,28 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
   try {
-    const data = await Invoice.findById(id)
-    if (!data) {
+    const data = await Invoice.aggregate([
+      { $match: { _id: new Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "attachments",
+          localField: "_id",
+          foreignField: "record_id",
+          as: "attachments"
+        }
+      },
+      {
+        $addFields: {
+          amount: { $divide: ["$amount", 100] },
+        }
+      }
+    ])
+
+    if (data.length === 0) {
       throw new Error('Invoice not found');
     }
 
-    const dataObject = data.toObject()
-    dataObject.amount = dataObject.amount / 100
-
-    return JSON.parse(JSON.stringify(dataObject));
+    return JSON.parse(JSON.stringify(data[0]));
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
