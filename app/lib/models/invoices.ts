@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
-export interface Invoices extends mongoose.Document {
+export interface iInvoice extends mongoose.Document {
  _id: Types.ObjectId;
  customer_id: Types.ObjectId;
  date: string;
@@ -8,7 +8,12 @@ export interface Invoices extends mongoose.Document {
  amount: number;
 }
 
-const invoicesSchema = new mongoose.Schema<Invoices>({
+export interface iInvoiceData extends Omit<iInvoice, "_id" | "customer_id"> {
+  customer_id: string;
+  _id: string;
+}
+
+const invoicesSchema = new mongoose.Schema<iInvoice>({
   customer_id: {
     type: Schema.Types.ObjectId,
     required: [true, "Please provide a name for this team."],
@@ -41,4 +46,4 @@ invoicesSchema.virtual('customer', {
   justOne: true,
 })
 
-export const Invoice = mongoose.models.invoices || mongoose.model<Invoices>("invoices", invoicesSchema);
+export const Invoice = mongoose.models.invoices || mongoose.model<iInvoice>("invoices", invoicesSchema);

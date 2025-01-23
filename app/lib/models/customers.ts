@@ -1,13 +1,18 @@
 import mongoose, { Types } from "mongoose";
+import { iInvoice } from "./invoices";
 
-export interface Customer extends mongoose.Document {
+export interface iCustomer extends mongoose.Document {
  _id: Types.ObjectId;
  name: string;
  email: string;
  image_url: string;
 }
 
-const customerSchema = new mongoose.Schema<Customer>({
+export interface iCustomerData extends Omit<iInvoice, "_id" | "customer_id"> {
+  _id: string;
+}
+
+const customerSchema = new mongoose.Schema<iCustomer>({
   name: {
     type: String,
     required: [true, "Please provide a name for this team."],
@@ -36,4 +41,4 @@ customerSchema.index(
     },
   }
 );
-export const Customer = mongoose.models.customers || mongoose.model<Customer>("customers", customerSchema);
+export const Customer = mongoose.models.customers || mongoose.model<iCustomer>("customers", customerSchema);

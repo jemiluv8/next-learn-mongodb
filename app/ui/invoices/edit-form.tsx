@@ -1,6 +1,5 @@
 'use client';
 
-import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,
@@ -8,16 +7,19 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import FileUploader from '../file-uploader/file-uploader';
+
+import { useActionState } from 'react';
 import { Button } from '@/app/ui/button';
 import { updateInvoice, State } from '@/app/lib/actions';
-import { useActionState } from 'react';
+import { iCustomerData, iInvoiceData } from '@/app/lib/models';
 
 export default function EditInvoiceForm({
   invoice,
   customers,
 }: {
-  invoice: InvoiceForm;
-  customers: CustomerField[];
+  invoice: iInvoiceData;
+  customers: iCustomerData[];
 }) {
   const initialState: State = { message: null, errors: {} };
   const updateInvoiceWithId = updateInvoice.bind(null, invoice._id);
@@ -148,6 +150,8 @@ export default function EditInvoiceForm({
             <p className="my-2 text-sm text-red-500">{state.message}</p>
           ) : null}
         </div>
+
+        <FileUploader />
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
